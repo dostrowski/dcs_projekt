@@ -16,11 +16,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     nmap \
     python-setuptools \
     libssl-dev \
-    libcap-dev 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+    libcap-dev \
 pkg-config gcc make build-essential libexpat-dev libgmp-dev \
              libssl-dev libpcap-dev byacc flex \
-             python-dev
+             python-dev \
+		libelf-dev
 
 RUN  apt-get -y update && \
      apt-get -y install ssh
@@ -34,7 +34,8 @@ COPY lagopus /root/lagopus
 RUN cd /root/mininet && util/install.sh -nfil
 
 RUN  apt-get -y update && \
- apt-get -y install openvswitch-switch
+ apt-get -y install openvswitch-switch 
 
-
-EXPOSE 6633 6653 6640
+RUN DEBIAN_FRONTEND=noninteractive apt-get install wireshark -y
+RUN sed -s 's/disable_lua = false/disable_lua = true/' /usr/share/wireshark/init.lua > /tmp/dotmp.txt && cat /tmp/dotmp.txt > /usr/share/wireshark/init.lua
+RUN echo 'X11UseLocalhost=no' >> /etc/ssh/sshd_config
